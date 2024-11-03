@@ -1,9 +1,5 @@
 import { browser } from '$app/environment';
-import { numbersToSerializable } from '$lib/numbers-to-serializable';
-import GUN from '../test/fegyver.pts?raw';
-import LAMP from '../test/lampa2.pts?raw';
 import { fileToSerializable } from './file-to-serializable';
-import { ptsToNumbers } from './pts-to-numbers';
 
 class FileStore {
 	readonly #KEY = 'PTS_FILES';
@@ -15,12 +11,7 @@ class FileStore {
 
 	loadFilesFromLocalStorage(): SerializableFile[] {
 		const str = browser ? localStorage.getItem(this.#KEY) : null;
-		return str
-			? JSON.parse(str)
-			: [
-					numbersToSerializable('gun.pts', ptsToNumbers(GUN)),
-					numbersToSerializable('lamp.pts', ptsToNumbers(LAMP)),
-				];
+		return str ? JSON.parse(str) : [];
 	}
 
 	get files() {
