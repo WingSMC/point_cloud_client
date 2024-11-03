@@ -8,6 +8,12 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 	}
+
+	type SerializableFile = {
+		name: string;
+		date: string;
+		data: number[];
+	};
 }
 
 export {};

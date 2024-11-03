@@ -1,6 +1,6 @@
 <script lang="ts">
 	import PointCloud from '$lib/components/PointCloud.svelte';
-	import { ptsToFloat32Array } from '$lib/pts-to-float32-array';
+	import { fileStore } from '$lib/store.svelte';
 	import Icon from '@iconify/svelte';
 	import {
 		AppBar,
@@ -8,51 +8,63 @@
 		FileDropzone,
 		getDrawerStore,
 		ListBox,
-		ListBoxItem
+		ListBoxItem,
 	} from '@skeletonlabs/skeleton';
-	import Fegyver from '../test/fegyver.pts?raw';
-	import Lampa from '../test/lampa2.pts?raw';
 
 	const drawer = getDrawerStore();
-
-	const files = $state([new File([Fegyver], 'fegyver.pts'), new File([Lampa], 'Lampa.pts')]);
 
 	function openDrawer() {
 		drawer.open({
 			position: 'left',
-			// Provide your property overrides:
 			bgBackdrop: 'bg-gradient-to-tr from-primary-500/50 to-tertiary-500/50',
 			width: 'w-full md:w-1/2',
 			padding: 'p-2',
-			rounded: 'rounded-xl'
+			rounded: 'rounded-xl',
 		});
 	}
 
 	function fileUpload(e: Event) {
 		const { files: fs } = e.target as HTMLInputElement;
 		if (!fs || fs.length === 0) return;
-		files.push(fs[0]);
-		fileIndex = files.length - 1;
+		fileStore.add(fs[0]);
 	}
 
-	//let ptsFile: undefined | FileList;
-	let fileIndex = $state<undefined | number>(undefined);
-	let file = $derived<undefined | File>(fileIndex === undefined ? undefined : files[fileIndex]);
-	const pointCloudPromise = $derived(file && ptsToFloat32Array(file));
+	let classes = $state<number[]>([]);
 </script>
 
 <Drawer>
-	<div class="grid overflow-y-auto p-3">
+	<div class="grid gap-3 overflow-y-auto p-3">
 		<ListBox class="grid">
-			{#each files as f, value (f)}
-				<ListBoxItem class="!rounded-md" name="file" bind:group={fileIndex} {value}>
-					{files[value].name}
-					<svelte:fragment slot="trail">(icon)</svelte:fragment>
+			{#each fileStore.files as f, value (f)}
+				<ListBoxItem
+					class="!rounded-md"
+					name="file"
+					bind:group={fileStore.currentFileIndex}
+					{value}
+				>
+					<div class="flex w-full justify-between">
+						<span>{f.name}</span>
+						<span>{new Date(f.date).toDateString()}</span>
+					</div>
+					<svelte:fragment slot="trail">
+						<Icon icon="fluent:delete-24-regular" onclick={() => fileStore.remove(value)} />
+					</svelte:fragment>
 				</ListBoxItem>
 			{:else}
-				<div>You have no files uploaded</div>
+				<span class="text-center font-bold h5">You have no files uploaded</span>
 			{/each}
 		</ListBox>
+		<FileDropzone
+			class="w-full !rounded-lg !py-3"
+			name="pts"
+			accept=".pts"
+			on:change={fileUpload}
+			required
+		>
+			<svelte:fragment slot="message">
+				<Icon icon="basil:add-outline" class="size-7" />
+			</svelte:fragment>
+		</FileDropzone>
 	</div>
 </Drawer>
 
@@ -63,17 +75,13 @@
 				<Icon class="size-6" icon="fluent:panel-left-48-filled" />
 			</button>
 		</svelte:fragment>
-		<h1 class="h4">Pointcloud segmentation with GNNs</h1>
+		<h1 class="h4 whitespace-nowrap">
+			{fileStore.currentFile ? fileStore.currentFile.name : 'Pointcloud segmentation with GNNs'}
+		</h1>
 	</AppBar>
 
-	{#if pointCloudPromise}
-		{#await pointCloudPromise}
-			<p>Loading...</p>
-		{:then pointCloudData}
-			<PointCloud {pointCloudData} />
-		{:catch error}
-			<p>{error.message}</p>
-		{/await}
+	{#if fileStore.currentFile}
+		<PointCloud points={fileStore.currentFile.data} {classes} />
 	{:else}
 		<div class="grid h-full place-items-center">
 			<FileDropzone

@@ -9,11 +9,11 @@ const config: Config = {
 
 	content: [
 		'./src/**/*.{html,js,svelte,ts}', // 3. Append the path to the Skeleton package
-		join(require.resolve('@skeletonlabs/skeleton'), '../**/*.{html,js,svelte,ts}')
+		join(require.resolve('@skeletonlabs/skeleton'), '../**/*.{html,js,svelte,ts}'),
 	],
 
 	theme: {
-		extend: {}
+		extend: {},
 	},
 
 	plugins: [
@@ -21,10 +21,10 @@ const config: Config = {
 		typography,
 		skeleton({
 			themes: {
-				preset: [{ name: 'crimson', enhancements: true }]
-			}
-		})
-	]
+				preset: [{ name: 'crimson', enhancements: true }],
+			},
+		}),
+	],
 };
 
 export default config;
