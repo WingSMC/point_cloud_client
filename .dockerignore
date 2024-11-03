@@ -11,5 +11,6 @@ src/test
 Dockerfile
 docker-compose.yaml
 eslint.config.js
+pnpm-lock.yaml
 *.md
 *.rest
