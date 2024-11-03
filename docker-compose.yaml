@@ -3,7 +3,5 @@ services:
     container_name: point_cloud_client
     restart: always
     image: wingsmc/point_cloud_client:latest
-    environment:
-      - PORT=8080
     ports:
       - "8080:8080"

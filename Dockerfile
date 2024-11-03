@@ -29,5 +29,6 @@ COPY --from=build /app/build /app/build
 COPY --from=base /app/static /app/static
 COPY --from=base /app/package.json /app/package.json
 
+ENV PORT=8080
 EXPOSE 8080
 CMD node build 
