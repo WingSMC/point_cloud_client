@@ -4,6 +4,7 @@
 
 - Download the `docker-compose.yaml`
 - Run `docker-compose up` in the same directory
+- Open `http://localhost:8080` in your browser (if 8080 is the port you specified in the `docker-compose.yaml`)
 
 ## Developing
 
@@ -12,6 +13,8 @@ Install dependencies:
 ```bash
 npm i
 ```
+
+Run development server:
 
 ```bash
 npm run dev
