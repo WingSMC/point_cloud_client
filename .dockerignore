@@ -1,0 +1,15 @@
+node_modules
+dist
+build
+src/test
+.svelte-kit
+.git
+.gitignore
+.prettierrc
+.prettierignore
+.dockerignore
+Dockerfile
+docker-compose.yaml
+eslint.config.js
+*.md
+*.rest
