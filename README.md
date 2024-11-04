@@ -8,6 +8,10 @@
 - Open `http://localhost:8080` in your browser (if 8080 is the port you specified in the `docker-compose.yaml`)
 - You can test the app with the provided sample files in the `src/test` directory.
 
+## Docker
+
+You can find the images on [Docker Hub](https://hub.docker.com/repository/docker/wingsmc/point_cloud_client).
+
 ## Developing
 
 Install dependencies:
