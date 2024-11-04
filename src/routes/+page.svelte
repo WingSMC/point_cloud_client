@@ -17,7 +17,7 @@
 		drawer.open({
 			position: 'left',
 			bgBackdrop: 'bg-gradient-to-tr from-primary-500/50 to-tertiary-500/50',
-			width: 'w-full md:w-1/2',
+			width: 'w-full md:w-1/2 2xl:w-1/4',
 			padding: 'p-2',
 			rounded: 'rounded-xl',
 		});
@@ -28,8 +28,6 @@
 		if (!fs || fs.length === 0) return;
 		fileStore.add(fs[0]);
 	}
-
-	let classes = $state<number[]>([]);
 </script>
 
 <Drawer>
@@ -81,7 +79,7 @@
 	</AppBar>
 
 	{#if fileStore.currentFile}
-		<PointCloud points={fileStore.currentFile.data} {classes} />
+		<PointCloud points={fileStore.currentFile.data} />
 	{:else}
 		<div class="grid h-full place-items-center">
 			<FileDropzone

@@ -3,5 +3,7 @@ services:
     container_name: point_cloud_client
     restart: always
     image: wingsmc/point_cloud_client:latest
+    environment:
+      - PUBLIC_API_URL=http://localhost:8081
     ports:
       - "8080:3000"

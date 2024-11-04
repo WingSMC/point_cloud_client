@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CLASS_COLOR_MAP } from '$lib/label-map';
+	import { env } from '$env/dynamic/public';
 	import { POINT_FRAGMENT_SHADER, POINT_VERTEX_SHADER } from '$lib/shaders';
 	import { onDestroy, onMount } from 'svelte';
 	import * as THREE from 'three';
@@ -7,14 +7,16 @@
 
 	const {
 		points,
-		classes,
 	}: {
 		points: number[];
-		classes: number[];
 	} = $props();
-	const colors = $derived(
-		classes.length ? classes.flatMap((c) => CLASS_COLOR_MAP[c]) : points.map(() => 1.0),
-	);
+
+	let classes = $state([]);
+
+	//const colors = $derived(
+	//	classes.length ? classes.flatMap((c) => CLASS_COLOR_MAP[c]) : points.map(() => 1.0),
+	//);
+	const colors = $derived(classes.length ? classes.flatMap((c) => c) : points.map(() => 1.0));
 	let canvasContainer = $state<HTMLDivElement>(null!);
 
 	let stopped = false;
@@ -83,6 +85,24 @@
 		stopped = true;
 		controls.dispose();
 		renderer.dispose();
+	});
+
+	$effect(() => {
+		const binary = new Float32Array(points);
+		classes = [];
+
+		fetch(`${env.PUBLIC_API_URL!}/octetsegment`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/octet-stream',
+				'Access-Control-Allow-Origin': '*',
+			},
+			mode: 'cors',
+			referrerPolicy: 'no-referrer',
+			body: binary.buffer,
+		})
+			.then((response) => response.json())
+			.then((res) => (classes = res.colors));
 	});
 
 	let prevT = performance.now();
