@@ -79,7 +79,9 @@
 	</AppBar>
 
 	{#if fileStore.currentFile}
-		<PointCloud points={fileStore.currentFile.data} />
+		<div class="relative">
+			<PointCloud points={fileStore.currentFile.data} />
+		</div>
 	{:else}
 		<div class="grid h-full place-items-center">
 			<FileDropzone

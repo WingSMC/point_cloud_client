@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { env } from '$env/dynamic/public';
+	import { CLASS_COLOR_MAP, CLASS_LABEL_MAP } from '$lib/label-map';
 	import { POINT_FRAGMENT_SHADER, POINT_VERTEX_SHADER } from '$lib/shaders';
 	import { onDestroy, onMount } from 'svelte';
 	import * as THREE from 'three';
@@ -12,12 +13,13 @@
 	} = $props();
 
 	let classes = $state([]);
-
-	//const colors = $derived(
-	//	classes.length ? classes.flatMap((c) => CLASS_COLOR_MAP[c]) : points.map(() => 1.0),
-	//);
+	let cloudClass = $state<number | undefined>(undefined);
+	let label = $derived(cloudClass === undefined ? '' : CLASS_LABEL_MAP[cloudClass]);
+	let legendColor = $derived(cloudClass === undefined ? [0, 0, 0] : CLASS_COLOR_MAP[cloudClass]);
 	const colors = $derived(classes.length ? classes.flatMap((c) => c) : points.map(() => 1.0));
 	let canvasContainer = $state<HTMLDivElement>(null!);
+
+	$effect(() => console.log(legendColor));
 
 	let stopped = false;
 	let renderer: THREE.WebGLRenderer;
@@ -105,6 +107,24 @@
 			.then((res) => (classes = res.colors));
 	});
 
+	$effect(() => {
+		const binary = new Float32Array(points);
+		classes = [];
+
+		fetch(`${env.PUBLIC_API_URL!}/octetclassify`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/octet-stream',
+				'Access-Control-Allow-Origin': '*',
+			},
+			mode: 'cors',
+			referrerPolicy: 'no-referrer',
+			body: binary.buffer,
+		})
+			.then((response) => response.json())
+			.then((res) => (cloudClass = res.detected_class_id));
+	});
+
 	let prevT = performance.now();
 	function animate(t: DOMHighResTimeStamp) {
 		if (stopped) return;
@@ -133,3 +153,13 @@
 {:else}
 	<p>Loading...</p>
 {/if}
+
+<div
+	class="bg-surface-100-800-token absolute right-4 top-4 flex min-w-52 items-center justify-start gap-4 rounded-md p-4 text-center font-bold capitalize"
+>
+	<div
+		class="h-4 w-4 rounded-full"
+		style={`background-color: rgb(${legendColor.map((c) => Math.round(c * 255)).join(' ')})`}
+	></div>
+	{label}
+</div>

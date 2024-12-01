@@ -1,4 +1,4 @@
-export const CLASS_LABEL_MAP = {
+export const CLASS_LABEL_MAP: Record<number, string> = {
 	0: 'plane',
 	1: 'luggage',
 	2: 'hat',
