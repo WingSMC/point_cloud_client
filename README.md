@@ -41,8 +41,6 @@ You can preview the production build with `npm run preview`.
 
 ## State of the project
 
-- Currently the front-end only implements the segmentation calls, the classification with the legend is not implemented yet.
-
 ![ui1](docs/doc3.png)
 ![ui2](docs/doc2.png)
 ![files](docs/doc1.png)
